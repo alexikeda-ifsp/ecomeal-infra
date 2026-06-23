@@ -1,7 +1,6 @@
----
-# EcoMeal - Infraestrutura
+# EcoMeal
 
-Infraestrutura do projeto EcoMeal utilizando:
+## Infraestrutura do projeto EcoMeal utilizando:
 
 - Vagrant para provisionamento da VM
 - Ansible para configuração automática do servidor
