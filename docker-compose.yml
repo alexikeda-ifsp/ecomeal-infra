@@ -3,7 +3,7 @@ services:
   frontend:
     container_name: frontend
     build:
-      context: ../ecomeal-frontend
+      context: ./ecomeal-frontend
       dockerfile: Dockerfile
 
     ports:
@@ -22,7 +22,7 @@ services:
     container_name: paciente-service
 
     build:
-      context: ../ecomeal-paciente-service
+      context: ./ecomeal-paciente-service
       dockerfile: Dockerfile
 
     ports:
@@ -47,7 +47,7 @@ services:
     container_name: planoalimentar-service
 
     build:
-      context: ../ecomeal-planoalimentar-service
+      context: ./ecomeal-planoalimentar-service
       dockerfile: Dockerfile
 
     ports:
@@ -85,7 +85,7 @@ services:
     container_name: recomendacao-service
 
     build:
-      context: ../ecomeal-recomendacao-service
+      context: ./ecomeal-recomendacao-service
       dockerfile: Dockerfile
 
     ports:
