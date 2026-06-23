@@ -1,0 +1,170 @@
+---
+- name: Configuração completa do servidor EcoMeal
+  hosts: all
+  become: true
+
+  vars:
+
+    workspace: /home/vagrant/ecomeal-workspace
+
+    repositories:
+
+      - name: ecomeal-infra
+        url: https://github.com/alexikeda-ifsp/ecomeal-infra.git
+
+      - name: ecomeal-frontend
+        url: https://github.com/alexikeda-ifsp/ecomeal-frontend.git
+
+      - name: ecomeal-paciente-service
+        url: https://github.com/alexikeda-ifsp/ecomeal-paciente-service.git
+
+      - name: ecomeal-planoalimentar-service
+        url: https://github.com/alexikeda-ifsp/ecomeal-planoalimentar-service.git
+
+      - name: ecomeal-recomendacao-service
+        url: https://github.com/alexikeda-ifsp/ecomeal-recomendacao-service.git
+
+
+  tasks:
+
+
+    #
+    # Dependências básicas
+    #
+
+    - name: Atualizar cache apt
+      apt:
+        update_cache: yes
+
+
+    - name: Instalar dependências
+      apt:
+        name:
+          - git
+          - curl
+          - unzip
+          - ca-certificates
+          - gnupg
+          - lsb-release
+        state: present
+
+
+
+    #
+    # Docker
+    #
+
+    - name: Criar diretório keyrings Docker
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
+
+    - name: Adicionar chave Docker
+      get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /etc/apt/keyrings/docker.asc
+        mode: '0644'
+
+
+    - name: Adicionar repositório Docker
+      apt_repository:
+        repo: >
+          deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc]
+          https://download.docker.com/linux/ubuntu
+          jammy stable
+        state: present
+
+
+    - name: Instalar Docker
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+        update_cache: yes
+
+
+    - name: Iniciar Docker
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Reiniciar Docker
+      service:
+        name: docker
+        state: restarted
+
+    - name: Adicionar usuário vagrant ao grupo docker
+      user:
+        name: vagrant
+        groups: docker
+        append: yes
+
+
+    - name: Aplicar grupo docker sem relogar
+      command: newgrp docker
+
+
+
+    #
+    # Preparar workspace
+    #
+
+    - name: Garantir diretório workspace
+      file:
+        path: "{{ workspace }}"
+        state: directory
+        owner: vagrant
+        group: vagrant
+        mode: '0755'
+
+    #
+    # Limpar diretórios antigos
+    #
+
+    - name: Remover pastas antigas dos serviços
+      file:
+        path: "{{ workspace }}/{{ item.name }}"
+        state: absent
+      loop: "{{ repositories }}"
+
+    #
+    # Clonar repositórios
+    #
+
+    - name: Clonar repositórios EcoMeal
+      git:
+        repo: "{{ item.url }}"
+        dest: "{{ workspace }}/{{ item.name }}"
+        version: HEAD
+        force: yes
+      loop: "{{ repositories }}"
+
+
+
+    #
+    # Subir aplicação
+    #
+
+    - name: Verificar instalação Docker
+      command: docker --version
+
+    - name: Verificar Docker Compose
+      command: docker compose version 
+
+    - name: Validar Dockerfiles
+      find:
+        paths: "{{ workspace }}"
+        patterns: Dockerfile         
+
+    - name: Subir containers EcoMeal
+      command:
+        cmd: docker compose up -d --build
+        chdir: "{{ workspace }}/ecomeal-infra"        
+
