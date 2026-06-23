@@ -93,6 +93,140 @@ http://192.168.56.10/
 
 ---
 
+# Documentação das APIs (Swagger)
+
+Todas as APIs foram desenvolvidas utilizando FastAPI e possuem documentação automática via Swagger UI.
+
+Após iniciar os containers:
+
+```bash
+docker compose up -d
+````
+
+acesse:
+
+---
+
+## Paciente Service
+
+Swagger:
+
+```
+http://localhost:8002/docs
+```
+
+Endpoints disponíveis:
+
+### Listar pacientes
+
+```
+GET /pacientes/
+```
+
+Exemplo:
+
+```bash
+curl http://localhost:8002/pacientes/
+```
+
+---
+
+## Plano Alimentar Service
+
+Swagger:
+
+```
+http://localhost:8000/docs
+```
+
+Endpoints disponíveis:
+
+### Listar planos alimentares
+
+```
+GET /planos/
+```
+
+Exemplo:
+
+```bash
+curl http://localhost:8000/planos/
+```
+
+---
+
+## Refeições Service
+
+Swagger:
+
+```
+http://localhost:8003/docs
+```
+
+Endpoints disponíveis:
+
+### Listar refeições
+
+```
+GET /refeicoes/
+```
+
+Exemplo:
+
+```bash
+curl http://localhost:8003/refeicoes/
+```
+
+---
+
+## Recomendação Service
+
+Swagger:
+
+```
+http://localhost:8001/docs
+```
+
+Endpoints disponíveis:
+
+### Listar sugestões de marmita
+
+```
+GET /sugestoes/
+```
+
+Exemplo:
+
+```bash
+curl http://localhost:8001/sugestoes/
+```
+
+### Buscar sugestão por ID
+
+```
+GET /sugestoes/{id}
+```
+
+Exemplo:
+
+```bash
+curl http://localhost:8001/sugestoes/1a0cd31c-9a60-409a-b335-070fe5b84370
+```
+
+---
+
+## Testando pelo Swagger UI
+
+Para testar uma API:
+
+1. Acesse o endereço `/docs` do serviço desejado.
+2. Localize o endpoint.
+3. Clique em **Try it out**.
+4. Clique em **Execute**.
+5. O retorno JSON será exibido na tela.
+
+---
+
 # Acessar a VM
 
 No diretório "ecomeal-infra", execute o comando para acessar a máquina virtual:
