@@ -119,8 +119,8 @@
     - name: Criar arquivo .env do Docker Compose
       copy:
         remote_src: yes
-        src: "{{ workspace }}/ecomeal-infra/config/.env.example"
-        dest: "{{ workspace }}/ecomeal-infra/.env"
+        src: "{{ workspace }}/config/.env.example"
+        dest: "{{ workspace }}/.env"
         owner: vagrant
         group: vagrant
         mode: '0644'
@@ -142,6 +142,6 @@
       become: false
       command:
         cmd: docker compose up -d --build
-        chdir: "{{ workspace }}/ecomeal-infra"
+        chdir: "{{ workspace }}"
 
         
