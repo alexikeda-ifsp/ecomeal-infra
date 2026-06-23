@@ -4,7 +4,21 @@
 -- =====================================================
 
 
+
+-- =====================================================
+-- CRIAÇÃO DOS DATABASES
+-- =====================================================
+
+CREATE DATABASE ecomeal_paciente;
+CREATE DATABASE ecomeal_planoalimentar;
+CREATE DATABASE ecomeal_refeicoes;
+CREATE DATABASE ecomeal_recomendacao;
+
+
+-- =====================================================
 -- UUID support
+-- =====================================================
+
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 
