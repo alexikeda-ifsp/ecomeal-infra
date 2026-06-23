@@ -118,6 +118,7 @@
     #
     - name: Criar arquivo .env do Docker Compose
       copy:
+        remote_src: yes
         src: "{{ workspace }}/ecomeal-infra/config/.env.example"
         dest: "{{ workspace }}/ecomeal-infra/.env"
         owner: vagrant

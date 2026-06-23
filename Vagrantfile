@@ -18,6 +18,8 @@ Vagrant.configure("2") do |config|
   config.vm.synced_folder ".",
                           "/home/vagrant/ecomeal-workspace"
 
+  config.vm.synced_folder ".",
+                          "/vagrant"
 
   # Instala Ansible
   config.vm.provision "shell", inline: <<-SHELL
@@ -33,6 +35,5 @@ Vagrant.configure("2") do |config|
     ansible.install = true
 
   end
-
 
 end
