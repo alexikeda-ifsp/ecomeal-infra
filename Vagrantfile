@@ -15,7 +15,7 @@ Vagrant.configure("2") do |config|
   end
 
 
-  config.vm.synced_folder "../",
+  config.vm.synced_folder ".",
                           "/home/vagrant/ecomeal-workspace"
 
 
@@ -29,7 +29,7 @@ Vagrant.configure("2") do |config|
   # Executa configuração da VM
   config.vm.provision "ansible_local" do |ansible|
 
-    ansible.playbook = "/home/vagrant/ecomeal-workspace/ecomeal-infra/ansible/playbook.yml"
+    ansible.playbook = "/home/vagrant/ecomeal-workspace/ansible/playbook.yml"
     ansible.install = true
 
   end

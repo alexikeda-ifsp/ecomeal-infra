@@ -3,7 +3,7 @@ services:
   frontend:
     container_name: frontend
     build:
-      context: ../../ecomeal-frontend
+      context: ../ecomeal-frontend
       dockerfile: Dockerfile
 
     ports:
@@ -22,7 +22,7 @@ services:
     container_name: paciente-service
 
     build:
-      context: ../../ecomeal-paciente-service
+      context: ../ecomeal-paciente-service
       dockerfile: Dockerfile
 
     ports:
@@ -36,7 +36,8 @@ services:
       DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
 
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
     networks:
       - ecomeal-network
@@ -46,7 +47,7 @@ services:
     container_name: planoalimentar-service
 
     build:
-      context: ../../ecomeal-planoalimentar-service
+      context: ../ecomeal-planoalimentar-service
       dockerfile: Dockerfile
 
     ports:
@@ -64,13 +65,17 @@ services:
       RABBITMQ_USER: ${RABBITMQ_USER}
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
 
-      PACIENTE_SERVICE_URL:
-        http://paciente-service:8002
+      PACIENTE_SERVICE_URL: "http://paciente-service:8002"
 
     depends_on:
-      - postgres
-      - rabbitmq
-      - paciente-service
+      postgres:
+        condition: service_healthy
+
+      rabbitmq:
+        condition: service_healthy
+
+      paciente-service:
+        condition: service_started
 
     networks:
       - ecomeal-network
@@ -80,7 +85,7 @@ services:
     container_name: recomendacao-service
 
     build:
-      context: ../../ecomeal-recomendacao-service
+      context: ../ecomeal-recomendacao-service
       dockerfile: Dockerfile
 
     ports:
@@ -99,14 +104,18 @@ services:
       RABBITMQ_USER: ${RABBITMQ_USER}
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
 
-      PLANOALIMENTAR_SERVICE_URL:
-        http://planoalimentar-service:8000
+      PLANOALIMENTAR_SERVICE_URL: "http://planoalimentar-service:8000"
 
 
     depends_on:
-      - postgres
-      - rabbitmq
-      - planoalimentar-service
+      postgres:
+        condition: service_healthy
+
+      rabbitmq:
+        condition: service_healthy
+
+      planoalimentar-service:
+        condition: service_started
 
     networks:
       - ecomeal-network
@@ -126,6 +135,12 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: postgres
 
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ecomeal"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
     volumes:
 
       - postgres_data:/var/lib/postgresql/data
@@ -143,17 +158,21 @@ services:
 
     image: rabbitmq:3-management-alpine
 
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
     ports:
       - "5672:5672"
       - "15672:15672"
 
     environment:
 
-      RABBITMQ_DEFAULT_USER:
-        ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_USER: "${RABBITMQ_USER}"
 
-      RABBITMQ_DEFAULT_PASS:
-        ${RABBITMQ_PASSWORD}
+      RABBITMQ_DEFAULT_PASS: "${RABBITMQ_PASSWORD}"
 
 
     volumes:
