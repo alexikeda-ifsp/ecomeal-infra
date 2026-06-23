@@ -86,7 +86,11 @@
         name: vagrant
         groups: docker
         append: yes
+      register: docker_group
 
+    - name: Reiniciar conexão após adicionar grupo docker
+      meta: reset_connection
+      when: docker_group.changed
 
     #
     # Workspace
@@ -138,19 +142,13 @@
       command:
         docker compose version
 
-    #- name: Subir ambiente EcoMeal
-    #  become: false
-    #  command:
-    #    cmd: docker compose up -d --build
-    #    chdir: "{{ workspace }}"
-
     - name: Subir ambiente EcoMeal
       become: false
-      become_user: vagrant
       shell: |
+        newgrp docker <<EOF
         docker compose down
         docker compose up -d --build
+        EOF
       args:
-        chdir: "{{ workspace }}"        
-
+        chdir: "{{ workspace }}"
         
